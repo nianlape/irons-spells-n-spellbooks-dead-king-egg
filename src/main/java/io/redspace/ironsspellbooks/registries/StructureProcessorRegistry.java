@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.registries;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.worldgen.RemoveWaterProcessor;
+import io.redspace.ironsspellbooks.worldgen.SupplementariesCompatProcessor;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,4 +18,5 @@ public class StructureProcessorRegistry {
     }
 
     public static final RegistryObject<StructureProcessorType<RemoveWaterProcessor>> REMOVE_WATER = PROCESSORS.register("remove_water", () -> () -> RemoveWaterProcessor.CODEC);
+    public static final RegistryObject<StructureProcessorType<SupplementariesCompatProcessor>> SUPPLEMENTARIES_COMPAT = PROCESSORS.register("supplementaries_replacer", () -> () -> SupplementariesCompatProcessor.CODEC);
 }

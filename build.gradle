@@ -103,11 +103,18 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge:${jei_version}")
 
+    compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge:${jei_version}")
     // CURIOS *****************************************************************************************************
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-    //Uncomment the following line to run with Curios in dev
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
+    // SUPPLEMENTARIES *****************************************************************************************************
+//    runtimeOnly fg.deobf("curse.maven:supplementaries-412082:4855909")
+//    compileOnly fg.deobf("curse.maven:supplementaries-412082:4855909")
+//    runtimeOnly fg.deobf("curse.maven:selene-499980:4843865")
+    implementation fg.deobf("curse.maven:sup-${sup_curseforge_id}:${sup_curseforge_file_id}")
+    implementation fg.deobf("curse.maven:selene-${selene_curseforge_id}:${selene_curseforge_file_id}")
     // BETTER COMBAT **********************************************************************************************
     runtimeOnly fg.deobf("curse.maven:better-combat-by-daedelus-${better_combat_version}")
     runtimeOnly fg.deobf("curse.maven:cloth-config-348521:4633416")
