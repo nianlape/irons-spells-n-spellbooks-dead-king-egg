@@ -26,9 +26,9 @@ public class SupplementariesActualImpl implements ISupplementariesProxy {
     }
     @Override
     public StructureTemplate.StructureBlockInfo handleStructureProcessor(@NotNull LevelReader level, @NotNull BlockPos jigsawPiecePos, @NotNull BlockPos jigsawPieceBottomCenterPos, @NotNull StructureTemplate.StructureBlockInfo blockInfoLocal, @NotNull StructureTemplate.StructureBlockInfo blockInfoGlobal, @NotNull StructurePlaceSettings settings, @Nullable StructureTemplate template) {
-        IronsSpellbooks.LOGGER.debug("SupplementariesActualImpl.handleStructureProcessor: {}", blockInfoGlobal.state.getBlock().getName().getString());
+        //IronsSpellbooks.LOGGER.debug("SupplementariesActualImpl.handleStructureProcessor: {}", blockInfoGlobal.state.getBlock().getName().getString());
         if (blockInfoGlobal.state.is(Blocks.LANTERN) && blockInfoGlobal.state.getValue(LanternBlock.HANGING)) {
-            IronsSpellbooks.LOGGER.debug("SupplementariesActualImpl.handleStructureProcessor: replacing hanging lantern");
+            //IronsSpellbooks.LOGGER.debug("SupplementariesActualImpl.handleStructureProcessor: replacing hanging lantern");
             BlockState blockState = ModRegistry.CANDLE_HOLDERS.get(null).get().defaultBlockState().setValue(CandleHolderBlock.FACE, AttachFace.CEILING).setValue(LightUpBlock.LIT, true);
             handleBlockReplacement(level, blockInfoGlobal.pos, blockState);
         }
