@@ -21,6 +21,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -98,11 +99,15 @@ public class RandomizeSpellFunction extends LootItemConditionalFunction {
         return LootRegistry.RANDOMIZE_SPELL_FUNCTION.get();
     }
 
-    pulbic
+    public
     static Codec<RandomizeSpellFunction> CODEC = RecordCodecBuilder.create((instance) -> {
-        return commonFields(instance).and(ExtraCodecs.strictOptionalField(NumberProvider.floatRange(0, 1), "quality").forGetter((p_298083_) -> {
-            return p_298083_.qualityRange.getFloat();
-        })).apply(instance, RandomizeSpellFunction::new);
+        return commonFields(instance)
+                .and(
+                        instance.group(
+                                NumberProviders.CODEC.fieldOf("quality").forGetter(p_298844_ -> p_298844_.qualityRange),
+                                SpellFilter.CODEC.optionalFieldOf("spellTypes").forGetter(p_299256_ -> java.util.Optional.ofNullable(p_299256_.applicableSpells))
+                        )
+                ).apply(instance, RandomizeSpellFunction::new);
     });
 
 

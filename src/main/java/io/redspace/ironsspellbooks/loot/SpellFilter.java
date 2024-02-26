@@ -3,19 +3,29 @@ package io.redspace.ironsspellbooks.loot;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
+import io.redspace.ironsspellbooks.util.LazyOptional;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -24,6 +34,19 @@ public class SpellFilter {
     List<AbstractSpell> spells = new ArrayList<>();
     static final LazyOptional<List<AbstractSpell>> DEFAULT_SPELLS = LazyOptional.of(() -> SpellRegistry.REGISTRY.get().getValues().stream().filter(AbstractSpell::allowLooting).toList());
     static final LazyOptional<Map<SchoolType, List<AbstractSpell>>> SPELLS_FOR_SCHOOL = LazyOptional.of(() -> SchoolRegistry.REGISTRY.get().getValues().stream().collect(Collectors.toMap((school -> school), (school -> SpellRegistry.getSpellsForSchool(school).stream().filter(AbstractSpell::allowLooting).toList()))));
+
+    public static final Codec<SpellFilter> CODEC = RecordCodecBuilder.create((instance) -> {
+        return instance.group(
+                // ExtraCodecs.either(
+                ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("school").forGetter(filter -> filter.schoolType.getId().toString().describeConstable()),
+                ExtraCodecs.nonEmptyList(ExtraCodecs.NON_EMPTY_STRING.listOf()).optionalFieldOf("spells").forGetter(filter -> Optional.of(((SpellFilter) filter).spells.stream().map(AbstractSpell::getSpellId).toList()))
+                //)
+        ).apply(instance, SpellFilter::new);
+    });
+
+    public SpellFilter(String school) {
+
+    }
 
     public SpellFilter(SchoolType schoolType) {
         this.schoolType = schoolType;
@@ -34,6 +57,10 @@ public class SpellFilter {
     }
 
     public SpellFilter() {
+    }
+
+    public SpellFilter(Optional<String> s, Optional<List<String>> strings) {
+
     }
 
     public boolean isFiltered() {
@@ -86,5 +113,9 @@ public class SpellFilter {
         } else {
             return new SpellFilter();
         }
+    }
+
+    private void deserializeSchool() {
+
     }
 }
