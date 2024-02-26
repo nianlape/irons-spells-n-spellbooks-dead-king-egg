@@ -8,10 +8,10 @@ import io.redspace.ironsspellbooks.registries.ParticleRegistry;
 import net.minecraft.core.particles.DustParticleOptionsBase;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -46,7 +46,7 @@ public class ShockwaveParticleOptions extends DustParticleOptionsBase {
     public Optional<ParticleOptions> trailParticle() {
         //This is only called once per construction of a particle
         try {
-            var type = ForgeRegistries.PARTICLE_TYPES.getValue(new ResourceLocation(ShockwaveParticleOptions.this.trailParticleRaw));
+            var type = BuiltInRegistries.PARTICLE_TYPE.get(new ResourceLocation(ShockwaveParticleOptions.this.trailParticleRaw));
             if (type instanceof ParticleOptions particleOptions) {
                 return Optional.of(particleOptions);
             }

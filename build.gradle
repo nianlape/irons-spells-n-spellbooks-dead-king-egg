@@ -1,9 +1,13 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'maven-publish'
+//    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+//    id 'org.spongepowered.mixin' version '0.7.+'
+//    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+//    id 'maven-publish'
+//    id 'idea'
+    id 'java-library'
     id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.0.80'
 }
 
 version = mod_version
@@ -18,43 +22,33 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
-minecraft {
-    mappings channel: mapping_channel, version: mapping_version
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    copyIdeResources = true
+minecraft.accessTransformers.files {
+    file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+}
 
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES' //SCAN, REGISTRYDUMP
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
+runs {
+    // applies to all the run configs below
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
 
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
 
-        gameTestServer {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
 
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -76,58 +70,58 @@ repositories {
 
 dependencies {
     // FORGE ******************************************************************************************************
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation "net.neoforged:neoforge:${neo_version}"
 
     // MIXINS *****************************************************************************************************
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    //annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
     // GECKOLIB ***************************************************************************************************
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+    implementation "software.bernie.geckolib:geckolib-neoforge-${geckolib_version}"
 
     // CAELUS *****************************************************************************************************
-    compileOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
+    compileOnly "top.theillusivec4.caelus:caelus-neoforge:${caelus_version}:api"
+    runtimeOnly "top.theillusivec4.caelus:caelus-neoforge:${caelus_version}"
 
     // PLAYER ANIMATOR ********************************************************************************************
-    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
+    implementation "dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}"
 
     // TETRA ******************************************************************************************************
-    compileOnly fg.deobf("se.mickelus.mutil:mutil:${mutil_version}")
-    compileOnly fg.deobf("curse.maven:tetra-${tetra_version}")
+    //compileOnly "se.mickelus.mutil:mutil:${mutil_version}"
+    //compileOnly "curse.maven:tetra-${tetra_version}"
     // If you want to run with tetra in dev comment the above line and uncomment the following 2 lines
     //runtimeOnly fg.deobf("curse.maven:tetra-${tetra_version}")
     //implementation fg.deobf("se.mickelus.mutil:mutil:${mutil_version}")
 
     // JEI ********************************************************************************************************
-    compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge:${jei_version}")
+    compileOnly "mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${jei_mc_version}-forge:${jei_version}"
     //runtimeOnly fg.deobf("curse.maven:just-enough-effect-descriptions-jeed-532286:4599099")
 
     // CURIOS *****************************************************************************************************
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     //Uncomment the following line to run with Curios in dev
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
     // BETTER COMBAT **********************************************************************************************
     //runtimeOnly fg.deobf("curse.maven:better-combat-by-daedelus-${better_combat_version}")
     //runtimeOnly fg.deobf("curse.maven:cloth-config-348521:4633416")
 
     // PATCHOULI **************************************************************************************************
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    //compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}:api"
+    //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
 
     // APOTHEOSIS
-    compileOnly fg.deobf("curse.maven:apotheosis-${apotheosis_version}")
-    runtimeOnly fg.deobf("curse.maven:apotheosis-${apotheosis_version}")
-    runtimeOnly fg.deobf("curse.maven:placebo-${placebo_version}")
-    runtimeOnly fg.deobf("curse.maven:attributeslib-${attributeslib_version}")
+    //compileOnly "curse.maven:apotheosis-${apotheosis_version}"
+    //runtimeOnly "curse.maven:apotheosis-${apotheosis_version}"
+    //runtimeOnly "curse.maven:placebo-${placebo_version}"
+    //runtimeOnly "curse.maven:attributeslib-${attributeslib_version}"
     //runtimeOnly fg.deobf("curse.maven:apotheosis-${apotheosis_version}")
     //runtimeOnly fg.deobf("curse.maven:placebo-${placebo_version}")
 
     //QOL
-    runtimeOnly fg.deobf("curse.maven:tslatentitystatus-tes-830420:5011935")
-    runtimeOnly fg.deobf("curse.maven:mouse-tweaks-60089:4581240")
+    runtimeOnly "curse.maven:tslatentitystatus-tes-830420:5001659"
+    //runtimeOnly "curse.maven:mouse-tweaks-60089:4581240"
 
     // JSON ******************************************************************************************************
     implementation "com.google.code.gson:gson:${gson_version}"
@@ -171,7 +165,7 @@ dependencies {
 def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
 def replaceProperties = [
         minecraft_version      : minecraft_version, minecraft_version_range: minecraft_version_range,
-        forge_version          : forge_version, forge_version_range: forge_version_range,
+        neo_version            : neo_version, neo_version_range: neo_version_range,
         loader_version_range   : loader_version_range,
         mod_id                 : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
         mod_authors            : mod_authors, mod_description: mod_description, mod_credits: mod_credits,
@@ -278,8 +272,3 @@ tasks.register('copyAnimations', Copy) {
 tasks.classes.dependsOn(tasks.copyAnimations)
 tasks.processResources.dependsOn(tasks.copyAnimations)
 tasks.sourcesJar.dependsOn(tasks.copyAnimations)
-
-mixin {
-    add sourceSets.main, 'irons_spellbooks.refmap.json'
-    config 'mixins.irons_spellbooks.json'
-}

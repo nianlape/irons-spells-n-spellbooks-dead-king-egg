@@ -6,10 +6,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class SpellDataRegistryHolder {
 
-    RegistryObject<AbstractSpell> registrySpell;
+    DeferredHolder<EntityType<?>, AbstractSpell> registrySpell;
     int spellLevel;
 
-    public SpellDataRegistryHolder(RegistryObject<AbstractSpell> registrySpell, int spellLevel) {
+    public SpellDataRegistryHolder(DeferredHolder<EntityType<?>, AbstractSpell> registrySpell, int spellLevel) {
         this.registrySpell = registrySpell;
         this.spellLevel = spellLevel;
     }

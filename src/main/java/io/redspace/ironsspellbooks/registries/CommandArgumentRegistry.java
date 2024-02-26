@@ -13,7 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class CommandArgumentRegistry {
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES.getRegistryName(), IronsSpellbooks.MODID);
 
-    private static final RegistryObject<SingletonArgumentInfo<SpellArgument>> SPELL_COMMAND_ARGUMENT_TYPE = ARGUMENT_TYPES.register("spell", () -> ArgumentTypeInfos.registerByClass(SpellArgument.class, SingletonArgumentInfo.contextFree(SpellArgument::spellArgument)));
+    private static final DeferredHolder<EntityType<?>, SingletonArgumentInfo<SpellArgument>> SPELL_COMMAND_ARGUMENT_TYPE = ARGUMENT_TYPES.register("spell", () -> ArgumentTypeInfos.registerByClass(SpellArgument.class, SingletonArgumentInfo.contextFree(SpellArgument::spellArgument)));
 
     public static void register(IEventBus modEventBus) {
         ARGUMENT_TYPES.register(modEventBus);

@@ -3,6 +3,8 @@ package io.redspace.ironsspellbooks.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.ISpellContainer;
@@ -10,13 +12,16 @@ import io.redspace.ironsspellbooks.api.spells.SpellRarity;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.item.Scroll;
 import io.redspace.ironsspellbooks.registries.LootRegistry;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.NavigableMap;
@@ -26,15 +31,14 @@ public class RandomizeSpellFunction extends LootItemConditionalFunction {
     final NumberProvider qualityRange;
     final SpellFilter applicableSpells;
 
-    protected RandomizeSpellFunction(LootItemCondition[] lootConditions, NumberProvider qualityRange, SpellFilter spellFilter) {
+    protected RandomizeSpellFunction(List<LootItemCondition> lootConditions, NumberProvider qualityRange, SpellFilter spellFilter) {
         super(lootConditions);
         this.qualityRange = qualityRange;
         this.applicableSpells = spellFilter;
     }
 
-
     @Override
-    protected ItemStack run(ItemStack itemStack, LootContext lootContext) {
+    protected @NotNull ItemStack run(ItemStack itemStack, @NotNull LootContext lootContext) {
         //irons_spellbooks.LOGGER.debug("RandomizeScrollFunction.run {}", itemStack.hashCode());
         if (itemStack.getItem() instanceof Scroll || Utils.canImbue(itemStack)) {
             var applicableSpells = this.applicableSpells.getApplicableSpells();
@@ -93,6 +97,14 @@ public class RandomizeSpellFunction extends LootItemConditionalFunction {
     public LootItemFunctionType getType() {
         return LootRegistry.RANDOMIZE_SPELL_FUNCTION.get();
     }
+
+    pulbic
+    static Codec<RandomizeSpellFunction> CODEC = RecordCodecBuilder.create((instance) -> {
+        return commonFields(instance).and(ExtraCodecs.strictOptionalField(NumberProvider.floatRange(0, 1), "quality").forGetter((p_298083_) -> {
+            return p_298083_.qualityRange.getFloat();
+        })).apply(instance, RandomizeSpellFunction::new);
+    });
+
 
     //might not be necesary?
     public static class Serializer extends LootItemConditionalFunction.Serializer<RandomizeSpellFunction> {

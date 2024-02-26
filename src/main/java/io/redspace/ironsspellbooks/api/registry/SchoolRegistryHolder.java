@@ -5,9 +5,9 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class SchoolRegistryHolder {
 
-    RegistryObject<SchoolType> registrySchool;
+    DeferredHolder<EntityType<?>, SchoolType> registrySchool;
 
-    public SchoolRegistryHolder(RegistryObject<SchoolType> registrySchool) {
+    public SchoolRegistryHolder(DeferredHolder<EntityType<?>, SchoolType> registrySchool) {
         this.registrySchool = registrySchool;
     }
 

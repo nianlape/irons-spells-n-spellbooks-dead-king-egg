@@ -435,7 +435,7 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
         return map;
     }
 
-    private static void createInkInteraction(Object2ObjectOpenHashMap<Item, AlchemistCauldronInteraction> map, RegistryObject<Item> ink) {
+    private static void createInkInteraction(Object2ObjectOpenHashMap<Item, AlchemistCauldronInteraction> map, DeferredHolder<Item, Item> ink) {
         map.put(ink.get(), (blockState, level, pos, currentLevel, itemstack) -> {
             if (currentLevel > 0 && level.getBlockEntity(pos) instanceof AlchemistCauldronTile tile) {
                 if (!isFull(tile.resultItems)) {
